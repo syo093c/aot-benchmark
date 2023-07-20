@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--max_id_num', type=int, default='-1')
 
     parser.add_argument('--start_gpu', type=int, default=0)
-    parser.add_argument('--gpu_num', type=int, default=-1)
+    parser.add_argument('--gpu_num', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=-1)
     parser.add_argument('--dist_url', type=str, default='')
     parser.add_argument('--amp', action='store_true')

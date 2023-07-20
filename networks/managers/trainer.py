@@ -10,6 +10,8 @@ import torch.optim as optim
 import torch.distributed as dist
 from torch.utils.data import DataLoader
 from torchvision import transforms
+from tqdm import tqdm
+import ipdb
 
 from dataloaders.train_datasets import DAVIS2017_Train, YOUTUBEVOS_Train, StaticTrain, TEST
 import dataloaders.video_transforms as tr
@@ -341,6 +343,7 @@ class Trainer(object):
 
         self.train_sampler = torch.utils.data.distributed.DistributedSampler(
             train_dataset) if self.cfg.DIST_ENABLE else None
+
         self.train_loader = DataLoader(train_dataset,
                                        batch_size=int(cfg.TRAIN_BATCH_SIZE /
                                                       cfg.TRAIN_GPUS),
@@ -351,10 +354,10 @@ class Trainer(object):
                                        drop_last=True,
                                        prefetch_factor=4)
 
+        #ipdb.set_trace()
         self.print_log('Done!')
 
     def sequential_training(self):
-
         cfg = self.cfg
 
         if self.enable_prev_frame:
@@ -393,7 +396,8 @@ class Trainer(object):
                 train_sampler.set_epoch(epoch)
             epoch += 1
             last_time = time.time()
-            for frame_idx, sample in enumerate(train_loader):
+
+            for frame_idx, sample in tqdm(enumerate(train_loader)):
                 if step > cfg.TRAIN_TOTAL_STEPS:
                     break
 

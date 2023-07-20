@@ -113,3 +113,9 @@ class AOT(nn.Module):
             self.patch_wise_id_bank.weight.view(
                 self.cfg.MODEL_ENCODER_EMBEDDING_DIM, -1).permute(0, 1),
             gain=17**-2 if self.cfg.MODEL_ALIGN_CORNERS else 16**-2)
+
+def test():
+    pass
+
+if __name__ == '__main__':
+    test()

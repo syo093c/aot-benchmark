@@ -191,6 +191,11 @@ class AOTEngine(nn.Module):
                             frame_step=-1,
                             obj_nums=None,
                             img_embs=None):
+        """
+        Fuminsyo:
+        1. get img embedding, get mask embedding.
+        2. matching with lstt.
+        """
         if self.obj_nums is None and obj_nums is None:
             print('No objects for reference frame!')
             exit()
@@ -582,9 +587,17 @@ class AOTInferEngine(nn.Module):
         return merged_logit
 
     def add_reference_frame(self, img, mask, obj_nums, frame_step=-1):
+        """
+        Fuminsyo:
+        let AOT inference engine have a list of aot_engine to tracking objects.
+        Actual processing is done at aot_engine.add_reference_frame
+        """
         if isinstance(obj_nums, list):
             obj_nums = obj_nums[0]
         self.obj_nums = obj_nums
+        
+        # Fuminsyo 2023/07/19
+        # To genreate multiple aot_engines. Why we need this?
         aot_num = max(np.ceil(obj_nums / self.max_aot_obj_num), 1)
         while (aot_num > len(self.aot_engines)):
             new_engine = AOTEngine(self.AOT, self.gpu_id,
@@ -596,6 +609,7 @@ class AOTInferEngine(nn.Module):
         separated_masks, separated_obj_nums = self.separate_mask(
             mask, obj_nums)
         img_embs = None
+        # Fuminsyo: Each engine deal with servel masks.
         for aot_engine, separated_mask, separated_obj_num in zip(
                 self.aot_engines, separated_masks, separated_obj_nums):
             aot_engine.add_reference_frame(img,
@@ -612,6 +626,7 @@ class AOTInferEngine(nn.Module):
         img_embs = None
         for aot_engine in self.aot_engines:
             aot_engine.match_propogate_one_frame(img, img_embs=img_embs)
+            # Fuminsyo: just reuse image embeddings to save time.
             if img_embs is None:  # reuse image embeddings
                 img_embs = aot_engine.curr_enc_embs
 

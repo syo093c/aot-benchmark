@@ -5,6 +5,11 @@ from networks.layers.transformer import LongShortTermTransformer
 from networks.decoders import build_decoder
 from networks.layers.position import PositionEmbeddingSine
 
+import torchinfo
+from configs.models.aots import ModelConfig
+from configs.default import DefaultEngineConfig
+import ipdb
+import sys
 
 class AOT(nn.Module):
     def __init__(self, cfg, encoder='mobilenetv2', decoder='fpn'):
@@ -74,8 +79,11 @@ class AOT(nn.Module):
         return pos_emb
 
     def get_id_emb(self, x):
+        # fuminsyo; x: batch,channel(max_obj+1),h,w
+        # x is one_hot_mask,
         id_emb = self.patch_wise_id_bank(x)
         id_emb = self.id_dropout(id_emb)
+        # fuminsyo; id_emb: batch,channel(model+encoder_embedding_dim),h,w
         return id_emb
 
     def encode_image(self, img):
@@ -115,7 +123,12 @@ class AOT(nn.Module):
             gain=17**-2 if self.cfg.MODEL_ALIGN_CORNERS else 16**-2)
 
 def test():
-    pass
+    config=ModelConfig()
+    engine_config=DefaultEngineConfig()
+    print(config)
+    #ipdb.set_trace()
+    model=AOT(engine_config)
+    torchinfo.summary(model,)
 
 if __name__ == '__main__':
     test()

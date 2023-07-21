@@ -167,9 +167,14 @@ class AOTEngine(nn.Module):
 
     def assign_identity(self, one_hot_mask):
         if self.enable_id_shuffle:
+            # fuminsyo
+            # einsum is for matrix multiple
+            # `bohw, bot` is input, `bthw` is output
+            # (hw, o)*(o,t)->(hw,t)->(t,hw), keep `b`, so result is `bthw`
             one_hot_mask = torch.einsum('bohw,bot->bthw', one_hot_mask,
                                         self.id_shuffle_matrix)
 
+        # b,c,h,w -> (hw),b,c
         id_emb = self.AOT.get_id_emb(one_hot_mask).view(
             self.batch_size, -1, self.enc_hw).permute(2, 0, 1)
 

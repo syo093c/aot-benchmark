@@ -9,6 +9,7 @@ from utils.image import one_hot_mask
 
 from networks.layers.basic import seq_to_2d
 
+import ipdb
 
 class AOTEngine(nn.Module):
     def __init__(self,
@@ -78,6 +79,7 @@ class AOTEngine(nn.Module):
             curr_losses.append(curr_loss)
             curr_masks.append(curr_mask)
 
+        ipdb.set_trace()
         self.match_propogate_one_frame()
         curr_loss, curr_mask, curr_prob = self.generate_loss_mask(
             self.offline_masks[self.frame_step], step, return_prob=True)

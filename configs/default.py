@@ -57,7 +57,8 @@ class DefaultEngineConfig():
         self.TRAIN_OPT = 'adamw'
         self.TRAIN_SGD_MOMENTUM = 0.9
         self.TRAIN_GPUS = 4
-        self.TRAIN_BATCH_SIZE = 16
+        #self.TRAIN_BATCH_SIZE = 16
+        self.TRAIN_BATCH_SIZE = 8
         self.TRAIN_TBLOG = False
         self.TRAIN_TBLOG_STEP = 50
         self.TRAIN_LOG_STEP = 20
